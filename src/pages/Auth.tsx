@@ -12,6 +12,12 @@ export default function Auth() {
   const [mode, setMode] = useState<Mode>(searchParams.get('mode') === 'signup' ? 'signup' : 'signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [streetAddress, setStreetAddress] = useState('');
+  const [city, setCity] = useState('');
+  const [stateVal, setStateVal] = useState('');
+  const [zip, setZip] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [signedUp, setSignedUp] = useState(false);
@@ -30,7 +36,20 @@ export default function Auth() {
       const { error: err } = await supabase.auth.signInWithPassword({ email, password });
       if (err) setError(err.message);
     } else {
-      const { error: err } = await supabase.auth.signUp({ email, password });
+      const { error: err } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            first_name: firstName,
+            last_name: lastName,
+            street_address: streetAddress,
+            city,
+            state: stateVal,
+            zip,
+          },
+        },
+      });
       if (err) {
         setError(err.message);
       } else {
@@ -114,25 +133,105 @@ export default function Auth() {
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-3">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Email"
-                  required
-                  className={inputClass}
-                  style={inputStyle}
-                />
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Password"
-                  required
-                  minLength={6}
-                  className={inputClass}
-                  style={inputStyle}
-                />
+                {mode === 'signup' ? (
+                  <>
+                    <div className="flex gap-3">
+                      <input
+                        type="text"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        placeholder="First name"
+                        required
+                        className={inputClass}
+                        style={inputStyle}
+                      />
+                      <input
+                        type="text"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        placeholder="Last name"
+                        required
+                        className={inputClass}
+                        style={inputStyle}
+                      />
+                    </div>
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Email"
+                      required
+                      className={inputClass}
+                      style={inputStyle}
+                    />
+                    <input
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Password"
+                      required
+                      minLength={6}
+                      className={inputClass}
+                      style={inputStyle}
+                    />
+                    <input
+                      type="text"
+                      value={streetAddress}
+                      onChange={(e) => setStreetAddress(e.target.value)}
+                      placeholder="Street address"
+                      className={inputClass}
+                      style={inputStyle}
+                    />
+                    <input
+                      type="text"
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
+                      placeholder="City"
+                      className={inputClass}
+                      style={inputStyle}
+                    />
+                    <div className="flex gap-3">
+                      <input
+                        type="text"
+                        value={stateVal}
+                        onChange={(e) => setStateVal(e.target.value)}
+                        placeholder="State"
+                        className={inputClass}
+                        style={inputStyle}
+                      />
+                      <input
+                        type="text"
+                        value={zip}
+                        onChange={(e) => setZip(e.target.value)}
+                        placeholder="ZIP"
+                        className={inputClass}
+                        style={inputStyle}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Email"
+                      required
+                      className={inputClass}
+                      style={inputStyle}
+                    />
+                    <input
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Password"
+                      required
+                      minLength={6}
+                      className={inputClass}
+                      style={inputStyle}
+                    />
+                  </>
+                )}
 
                 {error && (
                   <p className="text-xs px-3 py-2 rounded-lg" style={{ color: 'var(--color-terracotta)', backgroundColor: '#FEF2F0' }}>
